@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SchemaXL</title>
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles/main.css" />
+  <script type="text/javascript" src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js"></script>
+</head>
+<body>
+
+  <header>
+    <h1 class="site-title"><span class="title-schema">Schema</span><span class="title-xl">XL</span></h1>
+    <p class="site-desc">Transform your files into structured, Excel-ready data</p>
+  </header>
+
+  <div class="card" id="card">
+
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept=".csv,.txt,.json,.xml,.sxl" aria-label="file" />
+      <div class="drop-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <h2>Drag and drop your file here</h2>
+      <p>Supports CSV, TXT, XML, JSON, and SchemaXL files</p>
+      <button type="button" class="browse-btn">Browse</button>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="table-section" id="tableSection">
+      <input type="file" id="updateFileInput" accept=".csv,.txt,.json,.xml" aria-label="Replace current file" />
+      <div class="table-header">
+        <h3>File</h3>
+        <button type="button" class="reset-btn" id="resetBtn">Clear</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Size</th>
+              <th>Type</th>
+              <th>Modified</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div class="sxl-notice" id="sxlNotice">
+        Schema loaded — Click <strong>Browse</strong> in the Update column to link your data file for preview and export.
+      </div>
+    </div>
+
+    <div class="config-section" id="configSection">
+      <div class="config-header">
+        <h3>Schema</h3>
+        <div class="btn-group">
+          <button type="button" id="viewBtn" class="view-btn">Preview</button>
+          <div class="export-wrapper">
+            <button type="button" id="exportBtn" class="export-btn">
+              Export
+            </button>
+            <div class="export-menu" id="exportMenu">
+              <button type="button" id="exportCsvBtn" class="export-menu-item">CSV</button>
+              <button type="button" id="exportExcelBtn" class="export-menu-item">Excel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="config-meta">
+        <div class="delimiter-field">
+          <label for="delimiterInput">Delimiter</label>
+          <input type="text" id="delimiterInput" class="delimiter-input" readonly />
+        </div>
+        <label class="has-headers-label">
+          <input type="checkbox" id="hasHeadersCheck" checked />
+          File contains headers
+        </label>
+        <label class="qualify-headers-label">
+          <input type="checkbox" id="qualifyHeadersCheck" />
+          Include parent name
+        </label>
+        <div class="bulk-type-setter">
+          <select id="bulkTypeSelect" class="bulk-type-select" aria-label="Set all data types">
+            <option value="">Data type…</option>
+            <option value="General">General</option>
+            <option value="Number">Number</option>
+            <option value="Currency">Currency</option>
+            <option value="Accounting">Accounting</option>
+            <option value="Date">Date</option>
+            <option value="DateTime">DateTime</option>
+            <option value="Time">Time</option>
+            <option value="Percentage">Percentage</option>
+            <option value="Fraction">Fraction</option>
+            <option value="Scientific">Scientific</option>
+            <option value="Text">Text</option>
+            <option value="Boolean">Boolean</option>
+          </select>
+          <button type="button" id="applyTypeBtn" class="apply-type-btn">Set All</button>
+        </div>
+      </div>
+      <div class="fields-panel" id="fieldsPanel">
+        <div class="excluded-panel">
+          <p class="panel-label">Excluded</p>
+          <ul id="excludedList" class="excluded-list"></ul>
+        </div>
+        <div class="active-panel">
+          <div class="sample-nav">
+            <button type="button" id="samplePrevBtn" class="sample-nav-btn"><img src="assets/images/left-arrow.png" class="nav-arrow" alt="Previous"></button>
+            <span id="sampleRowLabel">—</span>
+            <button type="button" id="sampleNextBtn" class="sample-nav-btn"><img src="assets/images/right-arrow.png" class="nav-arrow" alt="Next"></button>
+          </div>
+          <table class="fields-table">
+            <colgroup>
+              <col class="col-header" />
+              <col class="col-type" />
+              <col class="col-sample" />
+              <col class="col-order" />
+              <col class="col-remove" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Header</th>
+                <th>Data Type</th>
+                <th>Value</th>
+                <th>Order</th>
+                <th>Remove</th>
+              </tr>
+            </thead>
+            <tbody id="activeList"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="save-section">
+        <button type="button" id="saveBtn" class="save-btn">Save</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="assets/scripts/app.js"></script>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 SchemaXL &middot; <a href="https://github.com/lsementa/SchemaXL" target="_blank" rel="noopener">GitHub</a></p>
+  </footer>
+
+</body>
+</html>
