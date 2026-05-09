@@ -1335,7 +1335,7 @@ function buildViewPage(filename, headers, rows, truncated) {
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Preview: ${escHtml(filename)}</title>
+<title>${escHtml(filename)}</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f1f5f9;min-height:100vh}

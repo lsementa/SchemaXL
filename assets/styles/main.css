@@ -13,7 +13,8 @@ body {
 
 /* ── Footer ── */
 .site-footer {
-  margin-top: 80px;
+  margin-top: auto;
+  padding-top: 48px;
   text-align: center;
   font-size: 0.8125rem;
   color: #94a3b8;
