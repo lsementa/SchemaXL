@@ -274,9 +274,22 @@ function flattenObject(obj, parentKey, qualify) {
 // without ever loading the whole file into memory.
 // Handles root arrays ([...]) and single-level wrapper objects ({"key":[...]}).
 async function* streamJsonObjects(file) {
-  if (!file.stream) {
-    // Fallback for browsers without the Streams API
-    const text = await readFullFile(file);
+  // Detect UTF-16 BOM — common in Windows/PowerShell JSON exports (Out-File default encoding)
+  let textEncoding = 'utf-8';
+  if (file.slice) {
+    const peek = new Uint8Array(await file.slice(0, 2).arrayBuffer());
+    if (peek[0] === 0xFF && peek[1] === 0xFE) textEncoding = 'utf-16le';
+    else if (peek[0] === 0xFE && peek[1] === 0xFF) textEncoding = 'utf-16be';
+  }
+
+  if (!file.stream || textEncoding !== 'utf-8') {
+    // Fallback: read whole file. Use explicit TextDecoder for UTF-16; FileReader for UTF-8.
+    let text;
+    if (textEncoding !== 'utf-8') {
+      text = new TextDecoder(textEncoding).decode(await file.arrayBuffer());
+    } else {
+      text = await readFullFile(file);
+    }
     let data; try { data = JSON.parse(text); } catch { return; }
     let arr = Array.isArray(data) ? data : null;
     if (!arr && data && typeof data === "object") {
